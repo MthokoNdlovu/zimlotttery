@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zim Lotto - Scratch Card Game</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Additional styles for the scratch card page */
+    .scratch-container {
+      text-align: center;
+      margin: 40px auto;
+    }
+    canvas {
+      border: 2px solid #e63946;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container header-container">
+      <div class="logo">
+        <h1>Zim Lotto</h1>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="draws.html">Draws</a></li>
+          <li><a href="tickets.html">Tickets</a></li>
+          <li><a href="scratchcard.html" class="active">Scratch Card</a></li>
+          <li><a href="winners.html">Winners</a></li>
+          <li><a href="login.html">Login</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Scratch Card Game Section -->
+  <section class="scratch-game">
+    <div class="container">
+      <h2>Scratch Card Game</h2>
+      <p>Try your luck! Scratch off the card to reveal your prize.</p>
+      <div class="scratch-container">
+        <canvas id="scratchCanvas" width="300" height="150"></canvas>
+      </div>
+      <button id="resetButton">Reset Card</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 Zim Lotto. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const canvas = document.getElementById('scratchCanvas');
+    const ctx = canvas.getContext('2d');
+    const resetButton = document.getElementById('resetButton');
+
+    // Define the underlying prize (this can be dynamic in a real application)
+    const prizeText = "You Won $100!";
+
+    // Function to initialize the scratch card
+    function initScratchCard() {
+      // Fill the canvas with a grey overlay
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = '#999';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw the prize text (centered) on the canvas
+      ctx.font = "20px Arial";
+      ctx.fillStyle = "#000";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(prizeText, canvas.width / 2, canvas.height / 2);
+      
+      // Set the composite mode to allow erasing the overlay (simulate scratching)
+      ctx.globalCompositeOperation = 'destination-out';
+    }
+
+    let isDrawing = false;
+
+    // Function to handle the scratching effect
+    function scratch(e) {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      ctx.beginPath();
+      ctx.arc(x, y, 15, 0, Math.PI * 2, false);
+      ctx.fill();
+    }
+
+    // Mouse events for desktop
+    canvas.addEventListener('mousedown', () => { isDrawing = true; });
+    canvas.addEventListener('mousemove', scratch);
+    canvas.addEventListener('mouseup', () => { isDrawing = false; });
+
+    // Touch events for mobile devices
+    canvas.addEventListener('touchstart', function(e) {
+      isDrawing = true;
+    });
+    canvas.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      ctx.beginPath();
+      ctx.arc(x, y, 15, 0, Math.PI * 2, false);
+      ctx.fill();
+    });
+    canvas.addEventListener('touchend', function() {
+      isDrawing = false;
+    });
+
+    // Reset the scratch card when the button is clicked
+    resetButton.addEventListener('click', function() {
+      initScratchCard();
+    });
+
+    // Initialize the scratch card on page load
+    initScratchCard();
+  </script>
+</body>
+</html>
